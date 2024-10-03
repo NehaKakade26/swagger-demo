@@ -1,0 +1,363 @@
+openapi: 3.0.1
+info:
+  title: Onfido API
+  description: "API for managing Onfido workflows and applicants."
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/rest/api/v1
+    description: "Local Server"
+
+paths:
+  /rest/api/v1/create-applicant:
+    post:
+      summary: "Create a new applicant"
+      description: "Creates a new applicant in Onfido and returns the applicant details."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateApplicantDto.Request"
+      responses:
+        "200":
+          description: "Applicant created successfully."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateApplicantDto.Response"
+        "400":
+          description: "Invalid request payload."
+
+  /rest/api/v1/create-workflow-run:
+    post:
+      summary: "Create a new workflow run"
+      description: "Creates a new workflow run for the given applicant and workflow ID."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWorkflowRunDto.Request"
+      responses:
+        "200":
+          description: "Workflow run created successfully."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateWorkflowRunDto.Response"
+        "400":
+          description: "Invalid request payload."
+
+  /rest/api/v1/callback:
+    post:
+      summary: "Handle webhook callbacks"
+      description: "Handles callbacks from external systems."
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: "Generic callback payload."
+      responses:
+        "200":
+          description: "Callback received and processed successfully."
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Data saved successfully"
+        "500":
+          description: "Error processing webhook."
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: "Error processing webhook"
+
+  /rest/api/v1/retrieve-workflow-run/{workflowRunId}:
+    get:
+      summary: "Retrieve a specific workflow run"
+      description: "Retrieves the details of a specific workflow run by ID."
+      parameters:
+        - in: path
+          name: workflowRunId
+          required: true
+          schema:
+            type: string
+          description: "The ID of the workflow run to retrieve."
+      responses:
+        "200":
+          description: "Workflow run retrieved successfully."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateWorkflowRunDto.Response"
+        "404":
+          description: "Workflow run not found."
+
+  /rest/api/v1/retrieve-workflow-run:
+    get:
+      summary: "Retrieve a list of workflow runs"
+      description: "Retrieves a list of all workflow runs."
+      responses:
+        "200":
+          description: "List of workflow runs retrieved successfully."
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CreateWorkflowRunDto.Response"
+
+components:
+  schemas:
+    CreateApplicantDto.Request:
+      type: object
+      properties:
+        first_name:
+          type: string
+          description: "The first name of the applicant."
+        last_name:
+          type: string
+          description: "The last name of the applicant."
+      required:
+        - first_name
+        - last_name
+
+    CreateApplicantDto.Response:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Unique identifier for the applicant."
+        created_at:
+          type: string
+          format: date-time
+          description: "Timestamp of when the applicant was created."
+        sandbox:
+          type: boolean
+          description: "Indicates if the applicant is in a sandbox environment."
+        first_name:
+          type: string
+          description: "The first name of the applicant."
+        last_name:
+          type: string
+          description: "The last name of the applicant."
+        email:
+          type: string
+          format: email
+          description: "Email address of the applicant."
+        dob:
+          type: string
+          format: date
+          description: "Date of birth of the applicant in YYYY-MM-DD format."
+        delete_at:
+          type: string
+          format: date-time
+          description: "Timestamp of when the applicant will be deleted."
+        href:
+          type: string
+          description: "URL link for the applicant resource."
+        id_numbers:
+          type: array
+          items:
+            type: string
+          description: "List of ID numbers associated with the applicant."
+        phone_number:
+          type: string
+          description: "Phone number of the applicant."
+        address:
+          $ref: "#/components/schemas/CreateApplicantDto.Address"
+        location:
+          $ref: "#/components/schemas/CreateApplicantDto.Location"
+      required:
+        - id
+        - first_name
+        - last_name
+        - created_at
+
+    CreateApplicantDto.Address:
+      type: object
+      properties:
+        flat_number:
+          type: string
+          description: "Flat number in the applicant's address."
+        building_number:
+          type: string
+          description: "Building number in the applicant's address."
+        building_name:
+          type: string
+          description: "Building name in the applicant's address."
+        street:
+          type: string
+          description: "Street name in the applicant's address."
+        sub_street:
+          type: string
+          description: "Additional street details, if any."
+        town:
+          type: string
+          description: "Town or city of the applicant's address."
+        state:
+          type: string
+          description: "State or province of the applicant's address."
+        postcode:
+          type: string
+          description: "Postal code or ZIP code of the address."
+        country:
+          type: string
+          description: "Country of the address."
+        line1:
+          type: string
+          description: "First address line."
+        line2:
+          type: string
+          description: "Second address line."
+        line3:
+          type: string
+          description: "Third address line, if applicable."
+      required:
+        - country
+        - street
+        - town
+
+    CreateApplicantDto.Location:
+      type: object
+      properties:
+        ip_address:
+          type: string
+          format: ipv4
+          description: "The IP address associated with the applicant."
+        country_of_residence:
+          type: string
+          description: "Country of residence for the applicant."
+
+    CreateWorkflowRunDto.Request:
+      type: object
+      properties:
+        applicant_id:
+          type: string
+          description: "The ID of the applicant associated with the workflow."
+        workflow_id:
+          type: string
+          description: "The workflow ID to run for the applicant."
+        tags:
+          type: array
+          items:
+            type: string
+          description: "Tags associated with the workflow run."
+        customer_user_id:
+          type: string
+          description: "Customer-specific user ID for tracking the applicant."
+        link:
+          $ref: "#/components/schemas/CreateWorkflowRunDto.Link"
+        created_at:
+          type: string
+          format: date-time
+          description: "Timestamp of when the workflow run was created."
+        updated_at:
+          type: string
+          format: date-time
+          description: "Timestamp of when the workflow run was last updated."
+        custom_data:
+          type: object
+          additionalProperties: true
+          description: "Custom data provided for the workflow run."
+      required:
+        - applicant_id
+        - workflow_id
+
+    CreateWorkflowRunDto.Response:
+      type: object
+      properties:
+        applicant_id:
+          type: string
+          description: "The ID of the applicant associated with the workflow."
+        id:
+          type: string
+          description: "Unique ID of the workflow run."
+        workflow_id:
+          type: string
+          description: "ID of the executed workflow."
+        tags:
+          type: array
+          items:
+            type: string
+          description: "Tags associated with the workflow run."
+        customer_user_id:
+          type: string
+          description: "Customer-specific user ID for tracking the applicant."
+        link:
+          $ref: "#/components/schemas/CreateWorkflowRunDto.Link"
+        created_at:
+          type: string
+          format: date-time
+          description: "Timestamp of when the workflow run was created."
+        updated_at:
+          type: string
+          format: date-time
+          description: "Timestamp of when the workflow run was last updated."
+        workflow_version_id:
+          type: integer
+          description: "Version ID of the workflow."
+        dashboard_url:
+          type: string
+          description: "URL to view the workflow run in the dashboard."
+        status:
+          type: string
+          description: "Status of the workflow run."
+        output:
+          type: object
+          additionalProperties: true
+          description: "Output generated by the workflow run."
+        reasons:
+          type: array
+          items:
+            type: string
+          description: "Reasons for the workflow run outcome, if any."
+        error:
+          $ref: "#/components/schemas/CreateWorkflowRunDto.Error"
+        sdk_token:
+          type: string
+          description: "SDK token generated for the workflow run."
+      required:
+        - id
+        - status
+
+    CreateWorkflowRunDto.Link:
+      type: object
+      properties:
+        url:
+          type: string
+          format: uri
+          description: "URL of the workflow link."
+        completed_redirect_url:
+          type: string
+          format: uri
+          description: "Redirect URL when the workflow is completed."
+        expired_redirect_url:
+          type: string
+          format: uri
+          description: "Redirect URL when the workflow link has expired."
+        expires_at:
+          type: string
+          format: date-time
+          description: "Expiration timestamp for the workflow link."
+        language:
+          type: string
+          description: "Language preference for the workflow link."
+      required:
+        - url
+
+    CreateWorkflowRunDto.Error:
+      type: object
+      properties:
+        type:
+          type: string
+          description: "Type of error encountered."
+        message:
+          type: string
+          description: "Error message describing the issue."
+      required:
+        - type
+        - message

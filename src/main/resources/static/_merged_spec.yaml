@@ -1,0 +1,19 @@
+---
+servers:
+- url: "http://localhost:8080"
+openapi: "3.0.1"
+paths:
+  /rest/api/v1/create-applicant:
+    $ref: "./onfido.yml#/paths/~1rest~1api~1v1~1create-applicant"
+  /rest/api/v1/retrieve-workflow-run/{workflowRunId}:
+    $ref: "./onfido.yml#/paths/~1rest~1api~1v1~1retrieve-workflow-run~1{workflowRunId}"
+  /rest/api/v1/retrieve-workflow-run:
+    $ref: "./onfido.yml#/paths/~1rest~1api~1v1~1retrieve-workflow-run"
+  /rest/api/v1/create-workflow-run:
+    $ref: "./onfido.yml#/paths/~1rest~1api~1v1~1create-workflow-run"
+  /rest/api/v1/callback:
+    $ref: "./onfido.yml#/paths/~1rest~1api~1v1~1callback"
+info:
+  title: "merged spec"
+  description: "merged spec"
+  version: "1.0.0"

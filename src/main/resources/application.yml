@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: rd-baas-idv-onfido-service
+  cloud:
+    config:
+      username: ${CONFIG_SERVER_USERNAME:reldyn}
+      password: ${CONFIG_SERVER_PASSWORD:reldyn}
+      fail-fast: false # fall back to local configuration
+  config:
+    import: "optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}"

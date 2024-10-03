@@ -1,0 +1,38 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/idv-onfido_db
+    username: postgres
+    password: root
+    hikari:
+      maximum-pool-size: 2
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    # database-platform: org.hibernate.dialect.PostgreSQLDialect
+    properties:
+      hibernate:
+  application:
+    name: service-onfido
+  config:
+    import: "optional:configserver:http://localhost:8888"
+#Onfido configuration
+onfido:
+  base:
+    url: https://api.eu.onfido.com
+  api:
+    token: Token token=api_sandbox.AQ0kQ_BbKn-.J7JUpZ4ydIjjnl5OyDJTYIaX-e6AreyC
+  content:
+    type: application/json
+#logging
+logging:
+  level:
+    root: INFO
+    co.reldyn.baas.idv.onfido: DEBUG
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    url: /_merged_spec.yaml

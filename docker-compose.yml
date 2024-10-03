@@ -1,0 +1,23 @@
+version: '3'
+services:
+  rd-baas-idv-onfido-service:
+    container_name: rd-baas-idv-onfido-service
+    image: reldyn/rd-baas-idv-onfido-service
+    volumes:
+      - /opt/avatars/:/tmp/
+    environment:
+      - CONFIG_SERVER_URL=http://rd-baas-config-server:8888
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=wiesoh3ooS5ohhai
+      - SPRING_DATASOURCE_HOST=rd-baas-db
+      - SPRING_DATASOURCE_PORT=5432
+      - SPRING_DATA_REDIS_PORT=6379
+      - SPRING_DATA_REDIS_HOST=rd-baas-redis
+      - SPRING_DATA_REDIS_PASSWORD=waal0qui7ohw5aeta6aegaiZ4aiC0yei
+      - COOKIE_DOMAIN=dp01.reldyn.dev
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://jaeger:4317
+      - OTEL_RESOURCE_ATTRIBUTES=service.name=rd-baas-idv-onfido-service
+networks:
+  default:
+    name: rd-baas-network
+    external: true
